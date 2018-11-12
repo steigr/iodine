@@ -4,7 +4,7 @@ set -e
 if [ -z ${IODINE_HOST} ]; then echo "Error: The external hostname must be specified in the IODINE_HOST enviroment variable"; exit 1; fi
 if [ -z ${IODINE_PASS} ]; then echo "Error: The Iodine password must be specified in the IODINE_PASS enviroment variable"; exit 1; fi
 if [ -z ${IPTABLES} ]; then IPTABLES="iptables -t filter -A FORWARD -i dns0 -o eth0 -j ACCEPT" && echo "WARN: Using standard IP tables rules - all traffic will be forwarded."; fi
-if [ ! -e '/dev/net/tun' ]; then echo "Error: /dev/net/tun missing! You must run this Dockerfile with --cap-add=NET_ADMIN"; exit 1; fi
+if [ ! -e '/dev/net/tun' ]; then test -d /dev/net || mkdir -p /dev/net; mknod /dev/net/tun c 10 200 || echo "Error: /dev/net/tun missing!"; exit 1; fi
 if [ ${#IODINE_PASS} -gt 32 ]; then echo "Warning: Long passwords are truncated to 32 characters!"; fi
 
 IODINE_IP=${IODINE_IP:-"10.42.16.1/24"}
